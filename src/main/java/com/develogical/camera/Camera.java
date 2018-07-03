@@ -1,17 +1,41 @@
 package com.develogical.camera;
 
-public class Camera {
+public class Camera implements WriteCompleteListener {
+    boolean power = false;
+    boolean iswriting = false;
+    Sensor sensor;
+    MemoryCard memcard;
+
+    public Camera(Sensor sensor) {
+        this.sensor = sensor;
+        //this.memcard = memcard;
+    }
+
+    public Camera(Sensor sensor, MemoryCard memoryCard) {
+        this.sensor = sensor;
+        this.memcard = memoryCard;
+    }
 
     public void pressShutter() {
-        // not implemented
+        if ( !power ) return;
+        iswriting = true;
+        memcard.write( sensor.readData(), this);
     }
 
     public void powerOn() {
-        // not implemented
+        sensor.powerUp();
+        power = true;
     }
 
     public void powerOff() {
-       // not implemented
+        if (iswriting) return;
+        sensor.powerDown();
+        power = false;
+    }
+
+    public void writeComplete()
+    {
+        iswriting = false;
     }
 }
 
