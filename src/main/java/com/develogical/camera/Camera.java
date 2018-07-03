@@ -3,6 +3,7 @@ package com.develogical.camera;
 public class Camera implements WriteCompleteListener {
     boolean power = false;
     boolean iswriting = false;
+    boolean shouldpowerdownafterwrite = false;
     Sensor sensor;
     MemoryCard memcard;
 
@@ -28,7 +29,11 @@ public class Camera implements WriteCompleteListener {
     }
 
     public void powerOff() {
-        if (iswriting) return;
+        if (iswriting)
+        {
+            shouldpowerdownafterwrite = true;
+            return;
+        }
         sensor.powerDown();
         power = false;
     }
@@ -36,6 +41,11 @@ public class Camera implements WriteCompleteListener {
     public void writeComplete()
     {
         iswriting = false;
+        if ( shouldpowerdownafterwrite )
+        {
+            shouldpowerdownafterwrite = false;
+            powerOff();
+        }
     }
 }
 
